@@ -35,6 +35,6 @@ $(bison_output) : parser.y
 $(flex_output) : lexer.l
 
 clean:
-	rm -f $(sources) $(target) $(bison_output) $(flex_output) *.o *.d *.core core
+	rm -f $(target) $(bison_output) $(flex_output) *.o *.d *.core core
 
 -include *.d

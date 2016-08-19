@@ -11,30 +11,31 @@ typedef void * yyscan_t;
 %locations
 %define api.pure full
 %lex-param {yyscan_t s}
-%parse-param {yyscan_t s}
+%parse-param {yyscan_t s} {struct node **tree}
 
 %union {
 	char *atom;
-	struct list *node;
+	struct node *node;
 }
 
 %token	ATOM
 
 %%
 
-sexps	:	sexp
+sexps	: sexp
 				| sexps sexp
 				;
 
 sexp	:	'('	list ')'
-				{ printf("SEXPR: %s\n", $<atom>2); }
+				{ printf("SEXPR: %p\n", $<atom>2); }
 				;
 
 list	:	node
 				| list node
 				;
 
-node	:	atom
+node	:	{ $<node>$ = NULL; }
+				atom
 				| sexp
 				;
 
@@ -50,7 +51,9 @@ main(int argc __attribute__ ((unused)) , char *argv[] __attribute__ ((unused)))
 {
     yyscan_t  s;
 
+		struct node *tree = NULL;
+
 		yylex_init(&s);
-		yyparse(s);
+		yyparse(s, &tree);
 		yylex_destroy(s);
 }
