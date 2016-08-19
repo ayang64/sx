@@ -1,6 +1,5 @@
 %{
 #include <stdio.h>
-#include "lexer.h"
 #include "parser.tab.h"
 %}
 
@@ -10,10 +9,11 @@
 
 %%
 
-[()]					{	return yytext[0]; }
+\"(\\.|[^"])*\"|\'(\\.|[^'])*\'	{ yylval->atom = strndup(yytext + 1, yyleng - 2); return ATOM; }
+[^[:space:]^(^)]+								{	yylval->atom = strdup(yytext); return ATOM; }
 
-[^[:space:]]	{	yylval->atom = strdup(yytext); return ATOM; }
+[()]														{	return yytext[0]; }
 
-[[:space:]]+	;
+[[:space:]]+										; /* ignore whitespace. */
 
 %%

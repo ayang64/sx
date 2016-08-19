@@ -1,9 +1,10 @@
-CFLAGS	:=	-MMD -std=gnu99 -Wall -W -ggdb
+CFLAGS	:=	-MMD -std=gnu11 -Wall -W -ggdb
 os			:=	$(shell uname)
 target	:=	sx
 bison_output	:=	parser.tab.c parser.tab.h
 flex_output		:=	lexer.c lexer.h
-sources	:=	parser.tab.c lexer.c
+sources	:=	parser.tab.c lexer.c list.c
+headers	:=	xmalloc.h list.h
 objects	:=	$(sources:.c=.o)
 
 ifeq ($(os), FreeBSD)
@@ -24,7 +25,9 @@ endif
 %.c : %.l
 	$(flex) $<
 
-$(target): $(bison_output) $(flex_output) $(objects)
+all : $(target)
+
+$(target) : $(headers) $(bison_output) $(flex_output) $(objects)
 	$(CC) $(objects) -o $@ -ll -ly
 
 $(bison_output) : parser.y
@@ -32,6 +35,6 @@ $(bison_output) : parser.y
 $(flex_output) : lexer.l
 
 clean:
-	rm -f $(sources) $(target) $(bison_output) $(flex_output) *.o *.d 
+	rm -f $(sources) $(target) $(bison_output) $(flex_output) *.o *.d *.core core
 
 -include *.d
