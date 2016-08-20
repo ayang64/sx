@@ -1,6 +1,8 @@
 %{
 #include <stdio.h>
+#include "object.h"
 #include "parser.tab.h"
+#include "log.h"
 %}
 
 %option   8bit bison-bridge bison-locations reentrant
@@ -9,11 +11,23 @@
 
 %%
 
-\"(\\.|[^"])*\"|\'(\\.|[^'])*\'	{ yylval->atom = strndup(yytext + 1, yyleng - 2); return ATOM; }
-[^[:space:]^(^)]+								{	yylval->atom = strdup(yytext); return ATOM; }
+\"(\\.|[^"])*\"|\'(\\.|[^'])*\'	{
+											pr("yyleng = %lu\n", yyleng);
+											char *temp = strndup(yytext + 1, yyleng - 2);
+											yylval->object = object_new(OBJECT_STRING, NULL, temp);
+											free(temp);
+											return ATOM;
+										}
 
-[()]														{	return yytext[0]; }
+[^[:space:]^(^)]+		{
+											yylval->object = object_new(OBJECT_ATOM, NULL, yytext);
+											return ATOM;
+										}
 
-[[:space:]]+										; /* ignore whitespace. */
+[()]								{
+											return yytext[0];
+										}
+
+[[:space:]]+				; /* ignore whitespace. */
 
 %%

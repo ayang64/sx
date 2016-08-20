@@ -3,8 +3,8 @@ os			:=	$(shell uname)
 target	:=	sx
 bison_output	:=	parser.tab.c parser.tab.h
 flex_output		:=	lexer.c lexer.h
-sources	:=	parser.tab.c lexer.c list.c
-headers	:=	xmalloc.h list.h
+sources	:=	parser.tab.c lexer.c object.c
+headers	:=	xmalloc.h object.h
 objects	:=	$(sources:.c=.o)
 
 ifeq ($(os), FreeBSD)
@@ -20,7 +20,7 @@ endif
 .PHONY : clean
 
 %.tab.h %.tab.c : %.y
-	$(bison) -d $<  
+	$(bison) -d -r all $<  
 
 %.c : %.l
 	$(flex) $<
@@ -35,6 +35,6 @@ $(bison_output) : parser.y
 $(flex_output) : lexer.l
 
 clean:
-	rm -f $(target) $(bison_output) $(flex_output) *.o *.d *.core core
+	rm -f $(target) $(bison_output) $(flex_output) parser.output *.o *.d *.core core
 
 -include *.d

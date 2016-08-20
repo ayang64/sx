@@ -16,3 +16,4 @@
 #define _xfunc(f,...)		({ void *rc = f(__VA_ARGS__); assert (rc != NULL); rc;  })
 #define xmalloc(s)			_xfunc(malloc,s)
 #define xrealloc(p,s)		_xfunc(realloc,p,s)
+#define xcalloc(nmemb, size)	_xfunc(calloc,nmemb,size)

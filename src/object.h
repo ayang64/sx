@@ -9,11 +9,26 @@ struct list {
 	void *data;
 };
 
-enum node_type { NODE_LIST, NODE_ATTRIBUTE, NODE_FUNCALL, NODE_ATOM };
+enum object_type {
+	OBJECT_ATOM,
+	OBJECT_ATTRIBUTE,
+	OBJECT_FUNCTION,
+	OBJECT_INTEGER,
+	OBJECT_LIST,
+	OBJECT_NIL,
+	OBJECT_SPECIAL_FORM,
+	OBJECT_STRING,
+	OBJECT_SYMBOL,
+};
 
-struct node {
-	enum node_type t;
-	char *atom;
-	struct list *nodes;
+struct object {
+	enum object_type type;
+	char *name;							/* can be anonymous */
+	union {
+		char *string;
+		long long integer;
+		long double real;
+		struct list *head;
+	} value;
 };
 
